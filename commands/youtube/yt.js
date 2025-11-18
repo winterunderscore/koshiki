@@ -57,7 +57,8 @@ module.exports = {
                                 });
                                 break;
                         case "remove":
-                                message.message.client.youtubers.destroy({ where: { channel_id: null } });
+                                const ch_id = message.reader.getString();
+                                message.message.client.youtubers.destroy({ where: { channel_id: ch_id } });
                                 break;
                         case "refresh":
                                 message.message.reply("force refreshing...");

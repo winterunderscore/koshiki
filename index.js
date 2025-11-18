@@ -72,7 +72,7 @@ client.once(Events.ClientReady, (client) => {
         console.log(client.commands);
         setInterval(() => {
                 client.commands.get("yt").extra.notify(client);
-        }, 20*60*1000) // 5 mins
+        }, 20*60*1000) // 20 mins
 });
 
 client.login(token);
