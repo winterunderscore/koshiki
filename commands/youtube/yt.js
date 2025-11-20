@@ -2,11 +2,10 @@ const { google_API_KEY } = require('../../config.json');
 const axios = require('axios');
 
 async function getLatestVideo(channelId) {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=1&order=date&type=video&key=${google_API_KEY}`;
+        const url = `https://www.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&channelId=${channelId}&maxResults=1&key=${google_API_KEY}`;
         console.log(url);
 
         const res = await axios.get(url);
-
         return res.data.items[0];
 }
 
@@ -16,15 +15,15 @@ async function notifyYT(client) {
         const list = await client.youtubers.findAll();
         for (let youtuber of list) {
                 const latest = await getLatestVideo(youtuber.channel_id);
-                if (youtuber.last_upload === latest.id.videoId) {
+                if (youtuber.last_upload === latest.contentDetails.upload.videoId) {
                         console.log(`no new vid by ${latest.snippet.channelTitle}`);
                         continue;
                 };
 
                 const channel = await client.channels.fetch(youtuber.notif_channel)
-                channel.send({content: `new upload by **${latest.snippet.channelTitle}** wow!!\nhttps://youtu.be/${latest.id.videoId}`});
+                channel.send({content: `new upload by **${latest.snippet.channelTitle}** wow!!\nhttps://youtu.be/${latest.contentDetails.upload.videoId}`});
 
-                client.youtubers.update({ last_upload: latest.id.videoId }, { where: { channel_id: youtuber.channel_id }})
+                client.youtubers.update({ last_upload: latest.contentDetails.upload.videoId }, { where: { channel_id: youtuber.channel_id }})
         };
 };
 
